@@ -1,0 +1,175 @@
+# ===== Inventory =====
+@app.route('/inventory')
+def inventory():
+    if "user_id" not in session or not session.get("is_admin"):
+        return redirect(url_for('dashboard'))
+
+    conn = get_db_connection()
+    ongoing_orders = conn.execute("""
+        SELECT COUNT(*) FROM orders 
+        WHERE payment_status='Pending' 
+        AND user_id IN (SELECT id FROM users)
+    """).fetchone()[0]
+
+    total_customers = conn.execute("""
+        SELECT COUNT(DISTINCT cust_name) FROM orders
+        WHERE user_id IN (SELECT id FROM users)
+    """).fetchone()[0]
+
+    total_sales = conn.execute("""
+        SELECT SUM(quantity) FROM orders 
+        WHERE user_id IN (SELECT id FROM users)
+    """).fetchone()[0] or 0
+
+    total_amount = conn.execute("""
+        SELECT SUM(price) FROM orders 
+        WHERE payment_status != 'Pending' 
+        AND user_id IN (SELECT id FROM users)
+    """).fetchone()[0] or 0
+
+    users = conn.execute("SELECT * FROM users WHERE username != 'admin'").fetchall()
+    conn.close()
+
+    return render_template("inventory.html",
+                           ongoing_orders=ongoing_orders,
+                           total_customers=total_customers,
+                           total_sales=total_sales,
+                           total_amount=total_amount,
+                           users=users)
+
+
+
+import sqlite3
+
+conn = sqlite3.connect("users.db")
+c = conn.cursor()
+
+# Create menu_status table
+c.execute("""CREATE TABLE IF NOT EXISTS menu_status (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    food TEXT UNIQUE NOT NULL,
+    status TEXT DEFAULT 'Available'
+)""")
+
+# Insert default menu items if not exists
+FOOD_PRICES = {
+    "Tapsilog": 120,
+    "Longsilog": 80,
+    "Maling silog": 50,
+    "Hotsilog": 60,
+    "Silog": 60,
+    "Bangus silog": 90,
+    "Pork silog": 70
+}
+
+for food in FOOD_PRICES.keys():
+    c.execute("INSERT OR IGNORE INTO menu_status (food, status) VALUES (?, ?)", (food, 'Available'))
+
+conn.commit()
+conn.close()
+
+
+
+<i class="bx bxs-user-circle" style="font-size:80px; color:#ffb347; opacity:0.9; margin-top:10px;"></i>
+
+
+
+def init_db():
+    with sqlite3.connect(DB_NAME) as con:
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS ratings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                food TEXT NOT NULL,
+                rating INTEGER NOT NULL
+            )
+        """)
+        con.execute("""
+            CREATE TABLE IF NOT EXISTS comments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                food TEXT NOT NULL,
+                comment TEXT NOT NULL
+            )
+        """)
+
+init_db()
+
+
+
+
+
+import sqlite3
+
+DB_NAME = "users.db"
+with sqlite3.connect(DB_NAME) as con:
+    con.execute("ALTER TABLE comments ADD COLUMN username TEXT")
+    print("Column added successfully!")
+
+
+
+
+
+
+
+import sqlite3
+
+DB_NAME = "users.db"
+
+conn = sqlite3.connect(DB_NAME)
+c = conn.cursor()
+
+# Run the SQL to create the messages table
+c.execute("""
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT NOT NULL,
+    receiver TEXT NOT NULL,
+    message TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+)
+""")
+
+conn.commit()
+conn.close()
+print("Messages table created successfully!")
+
+
+
+
+
+
+import sqlite3
+
+DB_NAME = "users.db"
+
+conn = sqlite3.connect(DB_NAME)
+c = conn.cursor()
+
+# Add role column if it doesn't exist
+try:
+    c.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'customer';")
+    print("✅ Role column added successfully.")
+except sqlite3.OperationalError as e:
+    print("⚠️ Skipping: ", e)
+
+conn.commit()
+conn.close()
+
+
+
+
+
+
+
+import sqlite3
+
+conn = sqlite3.connect("users.db")
+c = conn.cursor()
+
+# Update all predefined staff to have is_staff=1
+staff_usernames = ["staff1", "staff2", "staff3", "staff4", "staff5"]
+c.execute("UPDATE users SET is_staff=1 WHERE username IN ({seq})".format(
+    seq=','.join('?' for _ in staff_usernames)
+), staff_usernames)
+
+conn.commit()
+conn.close()

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Leshley's Eatery - Inventory</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='inventory.css') }}">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+<header>
+  <div class="logo" style="color: chocolate;">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo-img">Leshley's Eatery
+  </div>
+  
+  <div class="nav-wrapper">
+    <nav class="nav-center">
+      <div class="nav-dropdown">
+        <button class="nav-btn dropdown-btn">Main Page<i class="bx bx-chevron-down"></i></button>
+        <div class="dropdown-content">
+          <a href="{{ url_for('home') }}"><i class="bx bx-home"></i> Home</a>
+          <a href="{{ url_for('home') }}#about"><i class="bx bx-info-circle"></i> About Us</a>
+          <a href="{{ url_for('home') }}#rate"><i class="bx bx-star"></i> Ratings</a>
+          <a href="{{ url_for('home') }}#wews"><i class="bx bx-log-in"></i> Contacts</a>
+        </div>
+      </div>
+      <a href="{{ url_for('dashboard') }}" class="nav-btn" title="Dashboard"><i class="bx bx-grid-alt"></i></a>
+      <a href="{{ url_for('inventory') }}" class="nav-btn active" title="Inventory"><i class="bx bx-box"></i></a>
+      <a href="{{ url_for('add_order') }}" class="nav-btn" title="Add Order"><i class="bx bx-cart-add"></i></a>
+      {% if session.get('user_id') %}
+      <a href="{{ url_for('view_orders') }}" class="nav-btn" title="Orders"><i class="bx bx-receipt"></i></a>
+      {% endif %}
+    </nav>
+
+    <div class="nav-right profile-dropdown">
+      <button class="nav-btn profile-btn">
+        <i class="bx bx-user-circle"></i>
+        <span>Profile</span>
+        <i class="bx bx-chevron-down"></i>
+      </button>
+      <div class="profile-menu">
+        {% if session.get('user_id') %}
+          <a href="{{ url_for('logout') }}"><i class="bx bx-log-out"></i> Logout</a>
+        {% else %}
+          <a class="profile-action" href="{{ url_for('home') }}?form=login">
+            <i class="bx bx-log-in"></i> Login
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="inventory-main">
+  <h2>Quick Overview of Inventory</h2>
+  
+  <div class="admin-container">
+    <!-- Dashboard Cards -->
+    <div class="admin-cards">
+      <div class="admin-card">
+        <h3>Ongoing Orders</h3>
+        <p>{{ ongoing_orders }}</p>
+      </div>
+      <div class="admin-card">
+        <h3>Total Customers</h3>
+        <p>{{ total_customers }}</p>
+      </div>
+      <div class="admin-card">
+        <h3>Total Orders</h3>
+        <p>{{ total_sales }}</p>
+      </div>
+      <div class="admin-card">
+        <h3>Total Amount Collected</h3>
+        <p>₱{{ total_amount }}</p>
+      </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="color: #292828;">Username</th>
+          <th style="color: #292828;">Email</th>
+          <th style="color: #292828;">Phone</th>
+          <th style="color: #292828;">Address</th>
+          <th style="color: #292828;">Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>{{ user['username'] }}</td>
+          <td>{{ user['email'] }}</td>
+          <td>{{ user['phone'] }}</td>
+          <td>{{ user['address'] }}</td>
+          <td>
+            {% if user['is_admin'] %}
+              Admin
+            {% elif user['is_staff'] %}
+              Staff
+            {% else %}
+              Customer
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // All nav dropdowns
+  const navDropdowns = document.querySelectorAll(".nav-dropdown");
+  // Profile dropdown
+  const profileDropdown = document.querySelector(".profile-dropdown");
+  const profileBtn = profileDropdown.querySelector(".profile-btn");
+
+  // Handle nav dropdowns
+  navDropdowns.forEach(dropdown => {
+    const button = dropdown.querySelector(".dropdown-btn");
+
+    button.addEventListener("click", function (e) {
+      e.stopPropagation();
+
+      // Close other nav dropdowns and profile dropdown
+      navDropdowns.forEach(d => {
+        if (d !== dropdown) d.classList.remove("active");
+      });
+      profileDropdown.classList.remove("active");
+      profileBtn.classList.remove("active");
+
+      // Toggle current dropdown
+      dropdown.classList.toggle("active");
+    });
+  });
+
+  // Handle profile dropdown
+  profileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    // Close all nav dropdowns
+    navDropdowns.forEach(d => d.classList.remove("active"));
+
+    // Toggle profile dropdown
+    profileDropdown.classList.toggle("active");
+    profileBtn.classList.toggle("active");
+  });
+
+  // Close everything if clicking outside
+  document.addEventListener("click", () => {
+    navDropdowns.forEach(d => d.classList.remove("active"));
+    profileDropdown.classList.remove("active");
+    profileBtn.classList.remove("active");
+  });
+});
+</script>
+</body>
+</html>

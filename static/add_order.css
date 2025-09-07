@@ -1,0 +1,548 @@
+:root {
+  --primary-bg: linear-gradient(135deg, #ff8000, #ffb347);
+  --container-bg: #1b1b1b;
+  --section-title-bg: #ffb347;
+  --text-white: #fff;
+  --text-dark: #1b1b1b;
+  --button-bg: #ff8000;
+  --button-hover: #ffb347;
+  --card-bg: rgba(255,255,255,0.9);
+  --card-shadow: rgba(0,0,0,0.2);
+}
+
+/* Reset & Body */
+* { margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif; }
+body { background: var(--primary-bg); color: var(--text-dark); }
+
+/* ===== Glassmorphism Header & Navbar ===== */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 12px 20px;
+  background-color: var(--container-bg);
+  
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  user-select: none;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Logo */
+header .logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: chocolate;
+}
+
+header .logo::before {
+  content: '';
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+}
+
+.logo-img {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+}
+
+/* Navbar */
+nav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.nav-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.nav-center {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 1;
+}
+
+.nav-right {
+  margin-left: auto; /* pushes logout/profile to the far right */
+}
+
+nav i {
+  margin-right: 8px;
+  font-size: 1.2rem;
+  vertical-align: middle;
+}
+.nav-btn {
+  position: relative;
+}
+
+/* Tooltip style */
+.nav-btn[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(210, 105, 30, 0.65);
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  backdrop-filter: blur(6px);
+}
+
+/* Show tooltip on hover */
+.nav-btn:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(4px);
+}
+
+/* Nav buttons */
+.nav-btn, .nav-dropdown .dropdown-btn {
+  background-color: transparent;
+  color: chocolate;
+  border: none;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  text-decoration: none;
+}
+
+.nav-btn:hover, .nav-dropdown .dropdown-btn:hover {
+  color: #D2691E;
+  transform: scale(1.05);
+  border-bottom-color: #D2691E;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.nav-btn.active, .nav-dropdown .dropdown-btn.active {
+  color: #D2691E;
+  font-weight: 700;
+  border-bottom-color: #D2691E;
+  transform: scale(1.05);
+}
+
+/* Dropdown menu */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown .dropdown-btn {
+  transition: all 0.3s ease; /* add smooth scaling like profile dropdown */
+}
+
+.nav-dropdown .dropdown-btn i {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate icon and keep button scaled when active */
+.nav-dropdown.active .dropdown-btn {
+  transform: scale(1.05);
+  font-weight: 700;
+  border-bottom-color: #D2691E; /* this makes the border visible */
+}
+
+.nav-dropdown.active .dropdown-btn i {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown .dropdown-content {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 10000;
+}
+
+/* Active state when clicked (fade in) */
+.nav-dropdown.active .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Dropdown links */
+.nav-dropdown .dropdown-content a {
+  display: block;
+  padding: 10px 16px;
+  color: chocolate;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-radius: 0;
+}
+
+.nav-dropdown .dropdown-content a:hover {
+  background-color: #D2691E;
+  color: #fff;
+  transform: scale(1.05);
+}
+/* Responsive */
+@media screen and (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .nav-dropdown .dropdown-content {
+    position: relative;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+  }
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 25px;
+  padding: 8px 14px;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.profile-btn:hover {
+  transform: scale(1.05);
+}
+
+.profile-btn i {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.profile-dropdown.active .profile-btn i:last-child {
+  transform: rotate(180deg);
+}
+
+/* Dropdown menu */
+.profile-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-5px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  
+  position: absolute;
+  top: 110%;
+  right: 0;
+  min-width: 180px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: chocolate;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  overflow: hidden;
+  z-index: 9999;
+}
+
+/* Show menu when active (fade in) */
+.profile-dropdown.active .profile-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Menu items */
+.profile-menu a,
+.profile-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: none;
+  text-decoration: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 0.95rem;
+  color: chocolate;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile-menu a:hover,
+.profile-menu button:hover {
+  background: rgba(210, 105, 30, 0.8);
+  color: #fff;
+}
+
+/* Page Title */
+.section-title { text-align:center; margin:25px auto; font-size:1.8rem; color: var(--text-white); font-weight:bold; letter-spacing:1px; position:relative; animation: fadeInDown 1s ease; }
+.section-title .highlight { color: var(--text-dark); text-shadow:0 0 8px rgba(252,252,252,0.562); animation: glowPulse 2s infinite alternate; }
+.section-title::after { content:""; display:block; width:80px; height:4px; background: var(--text-white); margin:10px auto 0 auto; border-radius:2px; animation: expandLine 1.2s ease; }
+
+/* Grid Container */
+.container { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; max-width:1200px; margin:0 auto 80px auto; padding:0 10px; }
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border-radius:15px;
+  padding:10px;
+  text-align:center;
+  box-shadow:0 8px 20px var(--card-shadow);
+  opacity:0;
+  transform: translateY(20px);
+  animation: cardFadeIn 0.6s forwards;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:nth-child(1){animation-delay:0.1s;}
+.card:nth-child(2){animation-delay:0.2s;}
+.card:nth-child(3){animation-delay:0.3s;}
+.card:nth-child(4){animation-delay:0.4s;}
+.card:nth-child(5){animation-delay:0.5s;}
+.card:nth-child(6){animation-delay:0.6s;}
+.card:nth-child(7){animation-delay:0.7s;}
+.card:hover:not(.unavailable) { transform: translateY(-5px) scale(1.03); box-shadow:0 15px 25px var(--card-shadow); }
+
+.card img { width:100%; height:140px; object-fit:cover; border-radius:12px; transition: transform 0.4s; }
+.card img:hover { transform: scale(1.05); }
+
+.quantity { display:flex; justify-content:center; align-items:center; gap:10px; margin-top:10px; }
+.quantity button { border:none; background:none; font-size:20px; cursor:pointer; font-weight:bold; transition: transform 0.2s; }
+.quantity .minus { color:#ff4d4d; }
+.quantity .plus { color:#2ecc71; }
+.quantity button:hover:not(.unavailable){ transform:scale(1.2); }
+.count { width:25px; text-align:center; font-weight:bold; font-size:16px; }
+
+/* Footer Bar */
+.footer-bar { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); width:90%; max-width:900px; background:rgba(255,255,255,0.4); border-radius:25px; padding:15px 25px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 8px 20px rgba(0,0,0,0.25); }
+.footer-bar button { background:var(--button-bg); color:var(--text-white); border:none; padding:12px 25px; border-radius:20px; font-weight:bold; cursor:pointer; transition:0.3s; }
+.footer-bar button:hover { background: var(--button-hover); }
+.footer-bar button:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* Popup */
+.popup { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000; animation: fadeIn 0.3s ease forwards; }
+.popup-content { background:rgba(255,255,255,0.95); padding:25px 20px; border-radius:25px; width:400px; max-width:95%; text-align:center; position:relative; transform: scale(0.8); animation: popupScale 0.3s forwards; }
+.popup-content input { width:100%; padding:12px; margin:10px 0; border:1px solid #ccc; border-radius:12px; transition:0.3s; }
+.popup-content input:focus { border-color: var(--button-bg); transform: scale(1.02); }
+.popup-content button { width:100%; padding:12px; border:none; border-radius:15px; background: var(--button-bg); color: var(--text-white); font-weight:bold; cursor:pointer; margin-top:10px; transition: transform 0.3s; }
+.popup-content button:hover { background: var(--button-hover); transform: scale(1.03); }
+.close-btn { position:absolute; top:12px; right:16px; font-size:22px; cursor:pointer; color:#ff4d4d; transition: transform 0.2s; }
+.close-btn:hover { transform: scale(1.2); }
+
+/* Animations */
+@keyframes fadeInDown { 0% { opacity:0; transform:translateY(-20px);} 100% { opacity:1; transform:translateY(0);} }
+@keyframes cardFadeIn { 0% { opacity:0; transform:translateY(20px);} 100% { opacity:1; transform:translateY(0);} }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+@keyframes popupScale { from {transform:scale(0.8);} to {transform:scale(1);} }
+@keyframes glowPulse { from {text-shadow:0 0 6px rgba(255,179,71,0.5);} to {text-shadow:0 0 16px rgba(255,179,71,0.9);} }
+@keyframes expandLine { from {width:0;} to {width:80px;} }
+@keyframes fadeInUp { 0% { opacity:0; transform:translateY(20px); } 100% { opacity:1; transform:translateY(0); } }
+
+/* ===== Unavailable Food Styling with fade-in and staggered delays ===== */
+.card.unavailable {
+  filter: blur(0.6px) brightness(0.6);
+  pointer-events: none;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: unavailableFadeIn 0.6s forwards;
+}
+
+/* Staggered delays */
+.card.unavailable:nth-child(1){ animation-delay:0.1s; }
+.card.unavailable:nth-child(2){ animation-delay:0.2s; }
+.card.unavailable:nth-child(3){ animation-delay:0.3s; }
+.card.unavailable:nth-child(4){ animation-delay:0.4s; }
+.card.unavailable:nth-child(5){ animation-delay:0.5s; }
+.card.unavailable:nth-child(6){ animation-delay:0.6s; }
+.card.unavailable:nth-child(7){ animation-delay:0.7s; }
+
+.card.unavailable::after {
+  content: "Not Available";
+  position: absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background: rgba(255,0,0,0.8);
+  color:#fff;
+  font-weight:bold;
+  padding:6px 12px;
+  border-radius:12px;
+  font-size:0.9rem;
+  text-align:center;
+  pointer-events:none;
+}
+
+/* New fade-in animation for unavailable cards */
+@keyframes unavailableFadeIn {
+  0% { opacity:0; transform: translateY(20px); }
+  100% { opacity:0.6; transform: translateY(0); }
+}
+
+/* ===== Guest Modal Styling ===== */
+.guest-modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.guest-modal-content {
+  background-color: var(--container-bg);
+  padding: 30px 25px;
+  border-radius: 16px;
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+  animation: scaleUp 0.3s ease;
+}
+
+.guest-modal h2 {
+  color: var(--section-title-bg);
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.guest-modal p {
+  color: var(--text-white);
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.guest-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.guest-actions a {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--text-white);
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.guest-login-btn {
+  background: var(--button-bg);
+}
+.guest-login-btn:hover {
+  background: var(--button-hover);
+  transform: scale(1.05);
+  box-shadow: 0 0 8px var(--button-hover);
+}
+
+.guest-register-btn {
+  background: var(--edit-btn-bg);
+}
+.guest-register-btn:hover {
+  background: var(--edit-btn-hover);
+  transform: scale(1.05);
+  box-shadow: 0 0 8px var(--edit-btn-hover);
+}
+
+.guest-modal .guest-image {
+  margin-top: 10px;
+  width: 120px;
+  height: auto;
+  opacity: 0.9;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+}
+
+.close-guest-btn {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--text-white);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.close-guest-btn:hover {
+  color: var(--delete-btn-bg);
+}
+
+/* Modal Animations */
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.bxs-user-circle {
+  animation: pulse 1.5s infinite;
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  background: transparent; /* transparent background behind scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1); /* very transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 128, 0, 0.3); /* semi-transparent orange thumb */
+  border-radius: 10px;
+  border: 2px solid transparent; /* optional: adds spacing */
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 128, 0, 0.6); /* darker on hover */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 128, 0, 0.3) rgba(255, 255, 255, 0.1);
+}
